@@ -1,24 +1,21 @@
-"use client"
+"use client";
 
-import { useNotifications } from "@/lib/hooks/use-notifications"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Bell } from "lucide-react"
+import { useNotifications } from "@/lib/hooks/use-notifications";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Bell } from "lucide-react";
 
 export function NotificationSettings() {
-  const { settings, updateSettings, requestPermission, sendTestNotification, hasPermission } = useNotifications()
+  const { settings, updateSettings, requestPermission, hasPermission } = useNotifications();
 
   const handlePermissionRequest = async () => {
-    const granted = await requestPermission()
-    if (granted) {
-      sendTestNotification()
-    }
-  }
+    await requestPermission();
+  };
 
-  if (!settings) return null
+  if (!settings) return null;
 
   return (
     <Card>
@@ -37,13 +34,9 @@ export function NotificationSettings() {
               <Label>Browser Notifications</Label>
               <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
             </div>
-            {!hasPermission ? (
+            {!hasPermission && (
               <Button onClick={handlePermissionRequest} variant="outline" size="sm">
                 Enable
-              </Button>
-            ) : (
-              <Button onClick={sendTestNotification} variant="outline" size="sm">
-                Test
               </Button>
             )}
           </div>
@@ -53,12 +46,7 @@ export function NotificationSettings() {
               <Label htmlFor="push-enabled">Push Notifications</Label>
               <p className="text-sm text-muted-foreground">Get notified about upcoming tasks</p>
             </div>
-            <Switch
-              id="push-enabled"
-              checked={settings.push_notifications_enabled}
-              onCheckedChange={(checked) => updateSettings({ push_notifications_enabled: checked })}
-              disabled={!hasPermission}
-            />
+            <Switch id="push-enabled" checked={settings.push_notifications_enabled} onCheckedChange={checked => updateSettings({ push_notifications_enabled: checked })} disabled={!hasPermission} />
           </div>
         </div>
 
@@ -69,20 +57,13 @@ export function NotificationSettings() {
               <Label htmlFor="email-enabled">Email Digests</Label>
               <p className="text-sm text-muted-foreground">Receive daily email summaries of your tasks</p>
             </div>
-            <Switch
-              id="email-enabled"
-              checked={settings.email_notifications_enabled}
-              onCheckedChange={(checked) => updateSettings({ email_notifications_enabled: checked })}
-            />
+            <Switch id="email-enabled" checked={settings.email_digest_enabled} onCheckedChange={checked => updateSettings({ email_digest_enabled: checked })} />
           </div>
 
-          {settings.email_notifications_enabled && (
+          {settings.email_digest_enabled && (
             <div className="space-y-2">
               <Label htmlFor="digest-time">Digest Time</Label>
-              <Select
-                value={settings.digest_time || "09:00"}
-                onValueChange={(value) => updateSettings({ digest_time: value })}
-              >
+              <Select value={settings.email_digest_time || "09:00"} onValueChange={value => updateSettings({ email_digest_time: value })}>
                 <SelectTrigger id="digest-time">
                   <SelectValue />
                 </SelectTrigger>
@@ -107,19 +88,28 @@ export function NotificationSettings() {
             </div>
             <Switch
               id="quiet-hours"
-              checked={settings.quiet_hours_enabled}
-              onCheckedChange={(checked) => updateSettings({ quiet_hours_enabled: checked })}
+              checked={!!(settings.quiet_hours_start && settings.quiet_hours_end)}
+              onCheckedChange={checked => {
+                if (checked) {
+                  updateSettings({
+                    quiet_hours_start: "22:00",
+                    quiet_hours_end: "08:00",
+                  });
+                } else {
+                  updateSettings({
+                    quiet_hours_start: null,
+                    quiet_hours_end: null,
+                  });
+                }
+              }}
             />
           </div>
 
-          {settings.quiet_hours_enabled && (
+          {settings.quiet_hours_start && settings.quiet_hours_end && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="quiet-start">Start Time</Label>
-                <Select
-                  value={settings.quiet_hours_start || "22:00"}
-                  onValueChange={(value) => updateSettings({ quiet_hours_start: value })}
-                >
+                <Select value={settings.quiet_hours_start || "22:00"} onValueChange={value => updateSettings({ quiet_hours_start: value })}>
                   <SelectTrigger id="quiet-start">
                     <SelectValue />
                   </SelectTrigger>
@@ -134,10 +124,7 @@ export function NotificationSettings() {
 
               <div className="space-y-2">
                 <Label htmlFor="quiet-end">End Time</Label>
-                <Select
-                  value={settings.quiet_hours_end || "08:00"}
-                  onValueChange={(value) => updateSettings({ quiet_hours_end: value })}
-                >
+                <Select value={settings.quiet_hours_end || "08:00"} onValueChange={value => updateSettings({ quiet_hours_end: value })}>
                   <SelectTrigger id="quiet-end">
                     <SelectValue />
                   </SelectTrigger>
@@ -154,5 +141,5 @@ export function NotificationSettings() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

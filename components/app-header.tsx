@@ -8,8 +8,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { TaskForm } from "./task-form";
-import { NaturalLanguageInput } from "./natural-language-input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 
 interface AppHeaderProps {
@@ -43,18 +41,7 @@ export function AppHeader({ user }: AppHeaderProps) {
             <DialogHeader>
               <DialogTitle>Create New Task</DialogTitle>
             </DialogHeader>
-            <Tabs defaultValue="natural" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="natural">Natural Language</TabsTrigger>
-                <TabsTrigger value="form">Form</TabsTrigger>
-              </TabsList>
-              <TabsContent value="natural" className="mt-4">
-                <NaturalLanguageInput />
-              </TabsContent>
-              <TabsContent value="form" className="mt-4">
-                <TaskForm onSuccess={() => setIsDialogOpen(false)} />
-              </TabsContent>
-            </Tabs>
+            <TaskForm onSuccess={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
       </div>

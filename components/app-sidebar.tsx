@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { CheckSquare, Inbox, CalendarIcon, LayoutGrid, Filter, Settings, CheckCircle2, Calendar } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { CheckSquare, Inbox, CalendarIcon, LayoutGrid, Settings, CheckCircle2, Calendar } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: "Today", href: "/app", icon: CheckSquare },
@@ -13,11 +13,10 @@ const navigation = [
   { name: "Completed", href: "/app/completed", icon: CheckCircle2 },
   { name: "Calendar", href: "/app/calendar", icon: Calendar },
   { name: "Kanban", href: "/app/kanban", icon: LayoutGrid },
-  { name: "Filters", href: "/app/filters", icon: Filter },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <aside className="flex w-64 flex-col border-r bg-card">
@@ -27,19 +26,16 @@ export function AppSidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 p-4">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href
+        {navigation.map(item => {
+          const isActive = pathname === item.href;
           return (
             <Link key={item.name} href={item.href}>
-              <Button
-                variant={isActive ? "secondary" : "ghost"}
-                className={cn("w-full justify-start", isActive && "bg-secondary")}
-              >
+              <Button variant={isActive ? "secondary" : "ghost"} className={cn("w-full justify-start", isActive && "bg-secondary")}>
                 <item.icon className="mr-3 h-4 w-4" />
                 {item.name}
               </Button>
             </Link>
-          )
+          );
         })}
       </nav>
 
@@ -52,5 +48,5 @@ export function AppSidebar() {
         </Link>
       </div>
     </aside>
-  )
+  );
 }

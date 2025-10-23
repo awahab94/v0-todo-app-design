@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useUserSettings, useUpdateUserSettings } from "@/lib/hooks/use-user-settings"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useTheme } from "next-themes"
+import { useUserSettings, useUpdateUserSettings } from "@/lib/hooks/use-user-settings";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTheme } from "next-themes";
 
 export default function SettingsPage() {
-  const { data: settings, isLoading } = useUserSettings()
-  const updateSettings = useUpdateUserSettings()
-  const { theme, setTheme } = useTheme()
+  const { data: settings, isLoading } = useUserSettings();
+  const updateSettings = useUpdateUserSettings();
+  const { theme, setTheme } = useTheme();
 
   if (isLoading) {
     return (
@@ -21,10 +21,10 @@ export default function SettingsPage() {
         <Skeleton className="h-64 w-full" />
         <Skeleton className="h-64 w-full" />
       </div>
-    )
+    );
   }
 
-  if (!settings) return null
+  if (!settings) return null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -63,12 +63,11 @@ export default function SettingsPage() {
             </div>
             <Select
               value={settings.default_view}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 updateSettings.mutate({
                   default_view: value as "today" | "upcoming" | "inbox" | "kanban" | "calendar",
                 })
-              }
-            >
+              }>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
@@ -97,7 +96,7 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.push_notifications_enabled}
-              onCheckedChange={(checked) =>
+              onCheckedChange={checked =>
                 updateSettings.mutate({
                   push_notifications_enabled: checked,
                 })
@@ -112,7 +111,7 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.email_digest_enabled}
-              onCheckedChange={(checked) =>
+              onCheckedChange={checked =>
                 updateSettings.mutate({
                   email_digest_enabled: checked,
                 })
@@ -126,7 +125,7 @@ export default function SettingsPage() {
               <Input
                 type="time"
                 value={settings.email_digest_time}
-                onChange={(e) =>
+                onChange={e =>
                   updateSettings.mutate({
                     email_digest_time: e.target.value,
                   })
@@ -145,7 +144,7 @@ export default function SettingsPage() {
                   id="quiet-start"
                   type="time"
                   value={settings.quiet_hours_start || ""}
-                  onChange={(e) =>
+                  onChange={e =>
                     updateSettings.mutate({
                       quiet_hours_start: e.target.value || null,
                     })
@@ -158,7 +157,7 @@ export default function SettingsPage() {
                   id="quiet-end"
                   type="time"
                   value={settings.quiet_hours_end || ""}
-                  onChange={(e) =>
+                  onChange={e =>
                     updateSettings.mutate({
                       quiet_hours_end: e.target.value || null,
                     })
@@ -176,11 +175,9 @@ export default function SettingsPage() {
           <CardDescription>TaskFlow version and information</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            TaskFlow is an intelligent task manager built with Next.js, Supabase, and modern web technologies.
-          </p>
+          <p className="text-sm text-muted-foreground">TaskFlow is an intelligent task manager built with Next.js, Supabase, and modern web technologies.</p>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
