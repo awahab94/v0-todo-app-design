@@ -1,28 +1,25 @@
-"use client"
+"use client";
 
-import type { Task } from "@/lib/types/database"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Calendar, Clock, MoreVertical, Trash2, Edit, Repeat, Bell, BellOff, Paperclip } from "lucide-react"
-import { useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
-import { format, addHours } from "date-fns"
-import { getRecurrenceDescription } from "@/lib/utils/rrule-helpers"
-import { useState } from "react"
-import { TaskDetailDialog } from "./task-detail-dialog"
+import type { Task } from "@/lib/types/database";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar, Clock, MoreVertical, Trash2, Edit, Repeat, Bell, BellOff, Paperclip } from "lucide-react";
+import { useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { format, addHours } from "date-fns";
+import { getRecurrenceDescription } from "@/lib/utils/rrule-helpers";
+import { useState } from "react";
 
 interface TaskItemProps {
-  task: Task
-  onEdit?: (task: Task) => void
+  task: Task;
+  onEdit?: (task: Task) => void;
 }
 
 export function TaskItem({ task, onEdit }: TaskItemProps) {
-  const updateTask = useUpdateTask()
-  const deleteTask = useDeleteTask()
-  const [showDetail, setShowDetail] = useState(false)
-
+  const updateTask = useUpdateTask();
+  const deleteTask = useDeleteTask();
   const toggleComplete = async () => {
     await updateTask.mutateAsync({
       id: task.id,
@@ -30,22 +27,22 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
         status: task.status === "done" ? "todo" : "done",
         completed_at: task.status === "done" ? null : new Date().toISOString(),
       },
-    })
-  }
+    });
+  };
 
   const handleDelete = async () => {
-    await deleteTask.mutateAsync(task.id)
-  }
+    await deleteTask.mutateAsync(task.id);
+  };
 
   const handleSnooze = async (hours: number) => {
-    const snoozeUntil = addHours(new Date(), hours)
+    const snoozeUntil = addHours(new Date(), hours);
     await updateTask.mutateAsync({
       id: task.id,
       updates: {
         snoozed_until: snoozeUntil.toISOString(),
       },
-    })
-  }
+    });
+  };
 
   const handleUnsnooze = async () => {
     await updateTask.mutateAsync({
@@ -53,49 +50,36 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
       updates: {
         snoozed_until: null,
       },
-    })
-  }
+    });
+  };
 
   const getPriorityColor = (priority: string | null) => {
     switch (priority) {
       case "high":
-        return "bg-destructive text-destructive-foreground"
+        return "bg-destructive text-destructive-foreground";
       case "medium":
-        return "bg-orange-500 text-white"
+        return "bg-orange-500 text-white";
       case "low":
-        return "bg-blue-500 text-white"
+        return "bg-blue-500 text-white";
       default:
-        return "bg-muted text-muted-foreground"
+        return "bg-muted text-muted-foreground";
     }
-  }
+  };
 
-  const isSnoozed = task.snoozed_until && new Date(task.snoozed_until) > new Date()
+  const isSnoozed = task.snoozed_until && new Date(task.snoozed_until) > new Date();
 
   return (
     <>
-      <div
-        className={cn(
-          "group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:bg-accent",
-          task.status === "done" && "opacity-60",
-          isSnoozed && "opacity-50",
-        )}
-      >
+      <div className={cn("group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:bg-accent", task.status === "done" && "opacity-60", isSnoozed && "opacity-50")}>
         <Checkbox checked={task.status === "done"} onCheckedChange={toggleComplete} className="mt-1" />
 
-        <div className="flex-1 space-y-2" onClick={() => setShowDetail(true)} role="button" tabIndex={0}>
+        <div className="flex-1 space-y-2" onClick={() => onEdit?.(task)} role="button" tabIndex={0}>
           <div className="flex items-start justify-between gap-2">
-            <h3
-              className={cn(
-                "font-medium leading-tight cursor-pointer hover:text-primary",
-                task.status === "done" && "line-through",
-              )}
-            >
-              {task.title}
-            </h3>
+            <h3 className={cn("font-medium leading-tight cursor-pointer hover:text-primary", task.status === "done" && "line-through")}>{task.title}</h3>
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100">
+              <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                <Button variant="secondary" size="icon" className="h-8 w-8">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -177,7 +161,7 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
               </Badge>
             )}
 
-            {task.labels?.map((label) => (
+            {task.labels?.map(label => (
               <Badge key={label.id} variant="outline" style={{ borderColor: label.color, color: label.color }}>
                 {label.name}
               </Badge>
@@ -186,13 +170,11 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
 
           {task.subtasks && task.subtasks.length > 0 && (
             <div className="text-xs text-muted-foreground">
-              {task.subtasks.filter((st) => st.status === "done").length}/{task.subtasks.length} subtasks completed
+              {task.subtasks.filter(st => st.status === "done").length}/{task.subtasks.length} subtasks completed
             </div>
           )}
         </div>
       </div>
-
-      <TaskDetailDialog task={task} open={showDetail} onOpenChange={setShowDetail} />
     </>
-  )
+  );
 }

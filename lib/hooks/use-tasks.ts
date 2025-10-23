@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import type { Task, Label } from "@/lib/types/database";
+import type { Task, Label, Priority } from "@/lib/types/database";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useTasks(filters?: { status?: string; includeDeleted?: boolean }) {
@@ -36,7 +36,7 @@ export function useTasks(filters?: { status?: string; includeDeleted?: boolean }
       if (error) throw error;
 
       // Transform the data to flatten labels
-      return (data || []).map(task => ({
+      return (data || []).map((task: any) => ({
         ...task,
         labels: task.labels?.map((tl: { label: Label }) => tl.label) || [],
       })) as Task[];
@@ -146,7 +146,7 @@ export function useUpdateTask() {
       // Handle empty priority values
       const sanitizedUpdates = {
         ...taskUpdates,
-        priority: taskUpdates.priority && taskUpdates.priority !== "" ? taskUpdates.priority : null,
+        priority: taskUpdates.priority ? (taskUpdates.priority as Priority | null) : null,
         updated_at: new Date().toISOString(),
       };
 
