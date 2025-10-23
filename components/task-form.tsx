@@ -1,32 +1,34 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCreateTask, useUpdateTask } from "@/lib/hooks/use-tasks"
-import { useLabels } from "@/lib/hooks/use-labels"
-import type { Task } from "@/lib/types/database"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { useState } from "react"
-import { RecurrenceSelector } from "./recurrence-selector"
-import { AttachmentUpload } from "./attachment-upload"
-import { DateTimePicker } from "./date-time-picker"
-import { toUTC, fromUTC } from "@/lib/utils/timezone-helpers"
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCreateTask, useUpdateTask } from "@/lib/hooks/use-tasks";
+import { useLabels } from "@/lib/hooks/use-labels";
+import type { Priority, Task } from "@/lib/types/database";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import { useState } from "react";
+import { RecurrenceSelector } from "./recurrence-selector";
+import { AttachmentUpload } from "./attachment-upload";
+import { DateTimePicker } from "./date-time-picker";
+import { toUTC, fromUTC } from "@/lib/utils/timezone-helpers";
 
 interface TaskFormProps {
-  task?: Task
-  onSuccess?: () => void
-  parentId?: string
+  task?: Task;
+  onSuccess?: () => void;
+  parentId?: string;
 }
 
 interface TaskFormData {
-  title: string
-  description: string
-  priority: string
+  title: string;
+  description: string;
+  priority: string;
+  due_date: string;
+  due_time: string;
 }
 
 export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
@@ -42,17 +44,15 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
       due_date: "",
       due_time: "",
     },
-  })
+  });
 
-  const [selectedLabels, setSelectedLabels] = useState<string[]>(task?.labels?.map((l) => l.id) || [])
-  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(task?.recurrence_rule || null)
-  const [dueDateTime, setDueDateTime] = useState<Date | undefined>(
-    task?.due_date ? fromUTC(task.due_date) || undefined : undefined,
-  )
+  const [selectedLabels, setSelectedLabels] = useState<string[]>(task?.labels?.map(l => l.id) || []);
+  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(task?.recurrence_rule || null);
+  const [dueDateTime, setDueDateTime] = useState<Date | undefined>(task?.due_date ? fromUTC(task.due_date) || undefined : undefined);
 
-  const createTask = useCreateTask()
-  const updateTask = useUpdateTask()
-  const { data: labels } = useLabels()
+  const createTask = useCreateTask();
+  const updateTask = useUpdateTask();
+  const { data: labels } = useLabels();
 
   const onSubmit = async (data: TaskFormData) => {
     try {
@@ -64,28 +64,37 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
         due_time: dueDateTime ? dueDateTime.toTimeString().slice(0, 5) : null,
         label_ids: selectedLabels,
         recurrence_rule: recurrenceRule,
-      }
+      };
 
       if (task) {
         await updateTask.mutateAsync({
           id: task.id,
-          updates: taskData,
-        })
+          updates: {
+            ...taskData,
+            priority: taskData.priority as Priority,
+          },
+        });
       } else {
         await createTask.mutateAsync({
-          ...taskData,
+          title: taskData.title,
+          description: taskData.description,
+          priority: taskData.priority as Priority,
+          due_date: taskData.due_date as string,
+          due_time: taskData.due_time as string,
           parent_id: parentId,
-        })
+          label_ids: taskData.label_ids,
+          recurrence_rule: taskData.recurrence_rule,
+        });
       }
-      onSuccess?.()
+      onSuccess?.();
     } catch (error) {
-      console.error("[v0] Error saving task:", error)
+      console.error("[v0] Error saving task:", error);
     }
-  }
+  };
 
   const toggleLabel = (labelId: string) => {
-    setSelectedLabels((prev) => (prev.includes(labelId) ? prev.filter((id) => id !== labelId) : [...prev, labelId]))
-  }
+    setSelectedLabels(prev => (prev.includes(labelId) ? prev.filter(id => id !== labelId) : [...prev, labelId]));
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -103,10 +112,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="priority">Priority</Label>
-          <Select
-            defaultValue={task?.priority || ""}
-            onValueChange={(value) => register("priority").onChange({ target: { value } })}
-          >
+          <Select defaultValue={task?.priority || ""} onValueChange={value => register("priority").onChange({ target: { value } })}>
             <SelectTrigger>
               <SelectValue placeholder="Select priority" />
             </SelectTrigger>
@@ -129,8 +135,8 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
       <div className="space-y-2">
         <Label>Labels</Label>
         <div className="flex flex-wrap gap-2">
-          {labels?.map((label) => {
-            const isSelected = selectedLabels.includes(label.id)
+          {labels?.map(label => {
+            const isSelected = selectedLabels.includes(label.id);
             return (
               <Badge
                 key={label.id}
@@ -145,12 +151,11 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
                       }
                     : { borderColor: label.color, color: label.color }
                 }
-                onClick={() => toggleLabel(label.id)}
-              >
+                onClick={() => toggleLabel(label.id)}>
                 {label.name}
                 {isSelected && <X className="ml-1 h-3 w-3" />}
               </Badge>
-            )
+            );
           })}
         </div>
       </div>
@@ -168,5 +173,5 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
         </Button>
       </div>
     </form>
-  )
+  );
 }
