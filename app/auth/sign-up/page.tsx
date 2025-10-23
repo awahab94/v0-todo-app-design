@@ -1,0 +1,111 @@
+"use client"
+
+import type React from "react"
+
+import { useAuth } from "@/lib/hooks/use-auth"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
+import { useState } from "react"
+import { CheckSquare } from "lucide-react"
+
+export default function SignUpPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [displayName, setDisplayName] = useState("")
+  const [repeatPassword, setRepeatPassword] = useState("")
+  const { signUp, isLoading, error } = useAuth()
+  const [localError, setLocalError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLocalError(null)
+
+    if (password !== repeatPassword) {
+      setLocalError("Passwords do not match")
+      return
+    }
+
+    await signUp(email, password, displayName)
+  }
+
+  return (
+    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background to-muted p-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2">
+            <CheckSquare className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold">TaskFlow</h1>
+          </div>
+          <p className="text-sm text-muted-foreground">Your intelligent task manager</p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">Create an account</CardTitle>
+            <CardDescription>Get started with TaskFlow today</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="displayName">Display Name</Label>
+                  <Input
+                    id="displayName"
+                    type="text"
+                    placeholder="John Doe"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                  <Input
+                    id="repeat-password"
+                    type="password"
+                    required
+                    value={repeatPassword}
+                    onChange={(e) => setRepeatPassword(e.target.value)}
+                  />
+                </div>
+                {(error || localError) && <p className="text-sm text-destructive">{error || localError}</p>}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Sign up"}
+                </Button>
+              </div>
+              <div className="mt-4 text-center text-sm">
+                Already have an account?{" "}
+                <Link href="/auth/login" className="underline underline-offset-4">
+                  Sign in
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
