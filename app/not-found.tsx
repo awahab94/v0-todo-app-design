@@ -1,9 +1,21 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileX, Home, ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NotFound() {
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/app");
+    }
+  };
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background to-muted p-6">
       <div className="w-full max-w-md">
@@ -21,9 +33,7 @@ export default function NotFound() {
               <Search className="h-6 w-6 text-muted-foreground" />
               Page Not Found
             </CardTitle>
-            <CardDescription className="text-center">
-              The page you're looking for doesn't exist or has been moved.
-            </CardDescription>
+            <CardDescription className="text-center">The page you're looking for doesn't exist or has been moved.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-center">
@@ -35,9 +45,7 @@ export default function NotFound() {
             <div className="space-y-4">
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">404 Error</h3>
-                <p className="text-sm text-muted-foreground">
-                  The requested page could not be found. It might have been deleted, moved, or you might have entered the wrong URL.
-                </p>
+                <p className="text-sm text-muted-foreground">The requested page could not be found. It might have been deleted, moved, or you might have entered the wrong URL.</p>
               </div>
 
               <div className="space-y-3">
@@ -47,12 +55,10 @@ export default function NotFound() {
                     Go to Dashboard
                   </Link>
                 </Button>
-                
-                <Button asChild variant="outline" className="w-full" onClick={() => window.history.back()}>
-                  <div>
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Go Back
-                  </div>
+
+                <Button variant="outline" className="w-full" onClick={handleGoBack}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Go Back
                 </Button>
               </div>
 

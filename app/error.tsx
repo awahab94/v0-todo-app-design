@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, RefreshCw, Home, ArrowLeft, Bug } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -12,10 +13,20 @@ interface ErrorPageProps {
 }
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
+  const router = useRouter();
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error("Application error:", error);
   }, [error]);
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/app");
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background to-muted p-6">
@@ -66,11 +77,9 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                       Dashboard
                     </Link>
                   </Button>
-                  <Button asChild variant="outline" onClick={() => window.history.back()}>
-                    <div>
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      Go Back
-                    </div>
+                  <Button variant="outline" onClick={handleGoBack}>
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Go Back
                   </Button>
                 </div>
               </div>

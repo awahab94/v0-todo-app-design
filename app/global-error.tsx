@@ -36,9 +36,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                   <Bug className="h-6 w-6 text-red-500" />
                   Critical Error
                 </CardTitle>
-                <CardDescription className="text-center">
-                  A critical error occurred that prevented the application from loading properly.
-                </CardDescription>
+                <CardDescription className="text-center">A critical error occurred that prevented the application from loading properly.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex justify-center">
@@ -53,14 +51,8 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                       <Bug className="h-4 w-4" />
                       Error Details:
                     </h4>
-                    <p className="text-sm text-gray-600 font-mono break-all">
-                      {error.message || "A critical application error occurred"}
-                    </p>
-                    {error.digest && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        Error ID: {error.digest}
-                      </p>
-                    )}
+                    <p className="text-sm text-gray-600 font-mono break-all">{error.message || "A critical application error occurred"}</p>
+                    {error.digest && <p className="text-xs text-gray-500 mt-2">Error ID: {error.digest}</p>}
                   </div>
 
                   <div className="space-y-3">
@@ -68,7 +60,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Reload Application
                     </Button>
-                    
+
                     <Button asChild variant="outline" className="w-full">
                       <Link href="/">
                         <Home className="h-4 w-4 mr-2" />
@@ -84,9 +76,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                         contact our support team
                       </Link>
                     </p>
-                    <p className="text-xs text-gray-500">
-                      Error occurred at: {new Date().toLocaleString()}
-                    </p>
+                    <p className="text-xs text-gray-500">Error occurred at: {new Date().toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>

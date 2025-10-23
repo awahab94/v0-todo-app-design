@@ -26,9 +26,7 @@ export default function SupportPage() {
                 <MessageSquare className="h-5 w-5" />
                 Contact Support
               </CardTitle>
-              <CardDescription>
-                Send us a message and we'll get back to you within 24 hours.
-              </CardDescription>
+              <CardDescription>Send us a message and we'll get back to you within 24 hours.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -45,11 +43,7 @@ export default function SupportPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>
-                <Textarea
-                  id="message"
-                  placeholder="Please describe your issue or question..."
-                  rows={4}
-                />
+                <Textarea id="message" placeholder="Please describe your issue or question..." rows={4} />
               </div>
               <Button className="w-full">
                 <Mail className="h-4 w-4 mr-2" />
@@ -66,9 +60,7 @@ export default function SupportPage() {
                   <Phone className="h-5 w-5" />
                   Get Help
                 </CardTitle>
-                <CardDescription>
-                  Multiple ways to reach our support team.
-                </CardDescription>
+                <CardDescription>Multiple ways to reach our support team.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -104,28 +96,20 @@ export default function SupportPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Common Issues</CardTitle>
-                <CardDescription>
-                  Quick solutions to common problems.
-                </CardDescription>
+                <CardDescription>Quick solutions to common problems.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   <h4 className="font-medium">Can't log in?</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Try resetting your password or check your email for verification.
-                  </p>
+                  <p className="text-sm text-muted-foreground">Try resetting your password or check your email for verification.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium">Tasks not syncing?</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Refresh the page or check your internet connection.
-                  </p>
+                  <p className="text-sm text-muted-foreground">Refresh the page or check your internet connection.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium">Notifications not working?</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Check your browser notification permissions in settings.
-                  </p>
+                  <p className="text-sm text-muted-foreground">Check your browser notification permissions in settings.</p>
                 </div>
               </CardContent>
             </Card>
