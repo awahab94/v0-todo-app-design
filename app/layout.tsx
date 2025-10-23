@@ -5,6 +5,7 @@ import "./globals.css"
 import { QueryProvider } from "@/lib/providers/query-provider"
 import { ThemeProvider } from "@/lib/providers/theme-provider"
 import { Toaster } from "@/components/ui/sooner"
+import ErrorBoundary from "@/components/error-boundary"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <Toaster />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <QueryProvider>{children}</QueryProvider>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <Toaster />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <QueryProvider>{children}</QueryProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
