@@ -9,7 +9,6 @@ Follow these steps to get TaskFlow running on your local machine.
 - **Node.js 18+** - [Download here](https://nodejs.org/)
 - **pnpm** - Install with `npm install -g pnpm`
 - **Supabase Account** - [Sign up here](https://supabase.com)
-- **Firebase Account** - [Sign up here](https://firebase.google.com)
 - **Vercel Account** - [Sign up here](https://vercel.com) (for deployment)
 
 ## Step 1: Clone and Install
@@ -57,8 +56,6 @@ Run these SQL scripts in **SQL Editor**:
 -- 4. Storage bucket
 -- Run scripts/004_create_storage_bucket.sql
 
--- 5. Firebase tokens
--- Run scripts/006_create_firebase_tokens.sql
 ```
 
 ### 2.4 Configure Authentication
@@ -68,38 +65,7 @@ Run these SQL scripts in **SQL Editor**:
    - `http://localhost:3000/auth/callback`
    - `https://your-domain.com/auth/callback`
 
-## Step 3: Firebase Setup
-
-### 3.1 Create Firebase Project
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Click "Create a project"
-3. Enter project name: `taskflow-notifications`
-4. Enable Google Analytics (optional)
-
-### 3.2 Enable Cloud Messaging
-1. Go to **Build** → **Cloud Messaging**
-2. Click "Get started"
-
-### 3.3 Add Web App
-1. Go to **Project Settings** → **General**
-2. Scroll to "Your apps" section
-3. Click **Add app** → **Web** (</> icon)
-4. Register app name: `TaskFlow Web`
-5. Copy the config object
-
-### 3.4 Generate Service Account Key
-1. Go to **Project Settings** → **Service accounts**
-2. Click "Generate new private key"
-3. Download the JSON file
-4. Extract `private_key` and `client_email`
-
-### 3.5 Get VAPID Key
-1. Go to **Project Settings** → **Cloud Messaging**
-2. Scroll to "Web configuration"
-3. Click "Generate key pair" if not exists
-4. Copy the **Key pair**
-
-## Step 4: Environment Variables
+## Step 3: Environment Variables
 
 Create `.env.local` file in project root:
 
@@ -108,20 +74,6 @@ Create `.env.local` file in project root:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_KEY=your_supabase_service_role_key
-
-# Firebase Configuration (Client-side)
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key
-
-# Firebase Configuration (Server-side)
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour-private-key\n-----END PRIVATE KEY-----\n"
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your_project.iam.gserviceaccount.com
 
 # Application Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000

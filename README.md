@@ -3,7 +3,6 @@
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?style=for-the-badge&logo=supabase)](https://supabase.com)
-[![Firebase Ready](https://img.shields.io/badge/Firebase-Ready-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com)
 
 > **TaskFlow** is a modern, intelligent task management application that helps you organize, prioritize, and accomplish your goals efficiently across multiple presentation layers.
 
@@ -24,10 +23,9 @@
 - **🎯 Kanban Board** - Visual workflow management
 
 ### 🔔 Smart Notifications
-- **Push Notifications** - Firebase Cloud Messaging integration
-- **Scheduled Reminders** - 30-minute interval notifications
 - **Browser Notifications** - Cross-device synchronization
 - **Quiet Hours** - Customizable notification preferences
+- **Real-time Updates** - Live task synchronization
 
 ### 🎨 User Experience
 - **Theme System** - Light, Dark, and System themes
@@ -40,7 +38,6 @@
 ### Prerequisites
 - Node.js 18+ and pnpm
 - Supabase account
-- Firebase project
 - Vercel account (for deployment)
 
 ### Installation
@@ -68,13 +65,8 @@
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    SUPABASE_SERVICE_KEY=your_supabase_service_key
    
-   # Firebase
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key
-   FIREBASE_PRIVATE_KEY=your_private_key
-   FIREBASE_CLIENT_EMAIL=your_client_email
+   # Application
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
    ```
 
 4. **Set up the database**
@@ -86,7 +78,6 @@
    scripts/002_create_profile_trigger.sql
    scripts/003_create_default_labels.sql
    scripts/004_create_storage_bucket.sql
-   scripts/006_create_firebase_tokens.sql
    ```
 
 5. **Start development server**
@@ -115,11 +106,9 @@
   - Authentication system
   - Storage management
 
-### Notifications & Deployment
-- **Firebase Cloud Messaging** - Push notifications
+### Deployment
 - **Vercel** - Hosting and deployment
 - **Edge Functions** - Serverless functions
-- **Cron Jobs** - Scheduled notifications
 
 ## 📁 Project Structure
 
@@ -160,18 +149,10 @@ taskflow-app/
 4. Configure storage buckets
 5. Run database migration scripts
 
-### Firebase Setup
-1. Create Firebase project
-2. Enable Cloud Messaging
-3. Generate service account key
-4. Configure VAPID keys for web push
-5. Set up environment variables
-
 ### Vercel Deployment
 1. Connect your GitHub repository
 2. Configure environment variables
-3. Set up cron jobs for notifications
-4. Deploy with Edge Functions
+3. Deploy with Edge Functions
 
 ## 📊 Database Schema
 
@@ -181,7 +162,6 @@ taskflow-app/
 - `labels` - Task categorization
 - `task_labels` - Many-to-many relationship
 - `user_settings` - User preferences
-- `firebase_tokens` - Push notification tokens
 
 ### Key Features
 - Row Level Security for data isolation
@@ -269,7 +249,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Next.js](https://nextjs.org) for the amazing React framework
 - [Supabase](https://supabase.com) for the backend infrastructure
 - [shadcn/ui](https://ui.shadcn.com) for the beautiful components
-- [Firebase](https://firebase.google.com) for push notifications
 - [Vercel](https://vercel.com) for seamless deployment
 
 ## 📞 Support
