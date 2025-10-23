@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Task, Label, Priority } from "@/lib/types/database";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTaskAlerts } from "./use-task-alerts";
 
 export function useTasks(filters?: { status?: string; includeDeleted?: boolean }) {
   const supabase = createClient();
@@ -79,6 +80,7 @@ export function useTask(taskId: string | null) {
 export function useCreateTask() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { showTaskCreatedAlert, showTaskErrorAlert } = useTaskAlerts();
 
   return useMutation({
     mutationFn: async (task: {
@@ -129,8 +131,12 @@ export function useCreateTask() {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      showTaskCreatedAlert(data.title);
+    },
+    onError: (error) => {
+      showTaskErrorAlert("create task", error.message);
     },
   });
 }
@@ -138,9 +144,20 @@ export function useCreateTask() {
 export function useUpdateTask() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { 
+    showTaskUpdatedAlert, 
+    showTaskStatusChangeAlert, 
+    showTaskPriorityChangeAlert,
+    showTaskDueDateChangeAlert,
+    showTaskErrorAlert 
+  } = useTaskAlerts();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Task> & { label_ids?: string[] } }) => {
+    mutationFn: async ({ id, updates, originalTask }: { 
+      id: string; 
+      updates: Partial<Task> & { label_ids?: string[] };
+      originalTask?: Task;
+    }) => {
       const { label_ids, ...taskUpdates } = updates;
 
       // Handle empty priority values
@@ -172,11 +189,42 @@ export function useUpdateTask() {
         }
       }
 
-      return data;
+      return { data, originalTask };
     },
-    onSuccess: () => {
+    onSuccess: ({ data, originalTask }) => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["task"] });
+
+      // Show appropriate alerts based on what changed
+      if (originalTask) {
+        // Check for status change
+        if (data.status !== originalTask.status) {
+          showTaskStatusChangeAlert(data.title, originalTask.status, data.status);
+        }
+        
+        // Check for priority change
+        if (data.priority !== originalTask.priority) {
+          showTaskPriorityChangeAlert(data.title, originalTask.priority, data.priority);
+        }
+        
+        // Check for due date change
+        if (data.due_date !== originalTask.due_date) {
+          showTaskDueDateChangeAlert(data.title, originalTask.due_date, data.due_date);
+        }
+        
+        // Show general update alert if no specific changes detected
+        if (data.status === originalTask.status && 
+            data.priority === originalTask.priority && 
+            data.due_date === originalTask.due_date) {
+          showTaskUpdatedAlert(data.title);
+        }
+      } else {
+        // Fallback to general update alert if no original task provided
+        showTaskUpdatedAlert(data.title);
+      }
+    },
+    onError: (error) => {
+      showTaskErrorAlert("update task", error.message);
     },
   });
 }
@@ -184,6 +232,7 @@ export function useUpdateTask() {
 export function useDeleteTask() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { showTaskDeletedAlert, showTaskErrorAlert } = useTaskAlerts();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -196,9 +245,19 @@ export function useDeleteTask() {
         .eq("id", id);
 
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      // We'll show the alert with the task title if we can get it from cache
+      const tasks = queryClient.getQueryData(["tasks"]) as Task[] | undefined;
+      const task = tasks?.find(t => t.id === id);
+      if (task) {
+        showTaskDeletedAlert(task.title);
+      }
+    },
+    onError: (error) => {
+      showTaskErrorAlert("delete task", error.message);
     },
   });
 }
@@ -206,6 +265,7 @@ export function useDeleteTask() {
 export function useRestoreTask() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { showTaskRestoredAlert, showTaskErrorAlert } = useTaskAlerts();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -218,9 +278,19 @@ export function useRestoreTask() {
         .eq("id", id);
 
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      // We'll show the alert with the task title if we can get it from cache
+      const tasks = queryClient.getQueryData(["tasks"]) as Task[] | undefined;
+      const task = tasks?.find(t => t.id === id);
+      if (task) {
+        showTaskRestoredAlert(task.title);
+      }
+    },
+    onError: (error) => {
+      showTaskErrorAlert("restore task", error.message);
     },
   });
 }

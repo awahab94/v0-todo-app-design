@@ -29,12 +29,16 @@ interface TaskFormData {
   priority: string;
   due_date: string;
   due_time: string;
+  label_ids: string[];
+  recurrence_rule: string;
 }
 
 export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<TaskFormData>({
     defaultValues: {
@@ -43,11 +47,12 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
       priority: task?.priority || "",
       due_date: "",
       due_time: "",
+      label_ids: task?.labels?.map(l => l.id) || [],
+      recurrence_rule: task?.recurrence_rule || "",
     },
   });
 
   const [selectedLabels, setSelectedLabels] = useState<string[]>(task?.labels?.map(l => l.id) || []);
-  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(task?.recurrence_rule || null);
   const [dueDateTime, setDueDateTime] = useState<Date | undefined>(task?.due_date ? fromUTC(task.due_date) || undefined : undefined);
 
   const createTask = useCreateTask();
@@ -63,7 +68,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
         due_date: toUTC(dueDateTime),
         due_time: dueDateTime ? dueDateTime.toTimeString().slice(0, 5) : null,
         label_ids: selectedLabels,
-        recurrence_rule: recurrenceRule,
+        recurrence_rule: data.recurrence_rule,
       };
 
       if (task) {
@@ -73,6 +78,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
             ...taskData,
             priority: taskData.priority as Priority,
           },
+          originalTask: task,
         });
       } else {
         await createTask.mutateAsync({
@@ -130,7 +136,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
         </div>
       </div>
 
-      <RecurrenceSelector value={recurrenceRule || undefined} onChange={setRecurrenceRule} />
+      <RecurrenceSelector value={watch("recurrence_rule") || undefined} onChange={value => setValue("recurrence_rule", value || "")} />
 
       <div className="space-y-2">
         <Label>Labels</Label>

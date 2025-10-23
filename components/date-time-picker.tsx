@@ -1,73 +1,95 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { format } from "date-fns"
-import { CalendarIcon, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface DateTimePickerProps {
-  value?: Date
-  onChange: (date: Date | undefined) => void
-  placeholder?: string
+  value?: Date;
+  onChange: (date: Date | undefined) => void;
+  placeholder?: string;
 }
 
 export function DateTimePicker({ value, onChange, placeholder = "Pick a date and time" }: DateTimePickerProps) {
-  const [open, setOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(value)
-  const [timeValue, setTimeValue] = useState<string>(value ? format(value, "HH:mm") : "")
+  const [open, setOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
+    if (!value) return undefined;
+    try {
+      // Check if the date is valid
+      if (isNaN(value.getTime())) return undefined;
+      return value;
+    } catch (error) {
+      console.warn("Invalid date value provided to DateTimePicker:", value);
+      return undefined;
+    }
+  });
+  const [timeValue, setTimeValue] = useState<string>(() => {
+    if (!value) return "";
+    try {
+      // Check if the date is valid
+      if (isNaN(value.getTime())) return "";
+      return format(value, "HH:mm");
+    } catch (error) {
+      console.warn("Invalid date value provided to DateTimePicker:", value);
+      return "";
+    }
+  });
 
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) {
-      setSelectedDate(undefined)
-      onChange(undefined)
-      return
+      setSelectedDate(undefined);
+      onChange(undefined);
+      return;
     }
 
     // Preserve the time if it exists
     if (timeValue) {
-      const [hours, minutes] = timeValue.split(":").map(Number)
-      date.setHours(hours, minutes, 0, 0)
+      const [hours, minutes] = timeValue.split(":").map(Number);
+      date.setHours(hours, minutes, 0, 0);
     }
 
-    setSelectedDate(date)
-    onChange(date)
-  }
+    setSelectedDate(date);
+    onChange(date);
+  };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = e.target.value
-    setTimeValue(time)
+    const time = e.target.value;
+    if (!time) {
+      setTimeValue("");
+      return;
+    }
+    setTimeValue(time);
 
-    if (!selectedDate) return
+    if (!selectedDate) return;
 
-    const [hours, minutes] = time.split(":").map(Number)
-    const newDate = new Date(selectedDate)
-    newDate.setHours(hours, minutes, 0, 0)
+    const [hours, minutes] = time.split(":").map(Number);
+    const newDate = new Date(selectedDate);
+    newDate.setHours(hours, minutes, 0, 0);
 
-    setSelectedDate(newDate)
-    onChange(newDate)
-  }
+    setSelectedDate(newDate);
+    onChange(newDate);
+  };
 
   const handleClear = () => {
-    setSelectedDate(undefined)
-    setTimeValue("")
-    onChange(undefined)
-    setOpen(false)
-  }
+    setSelectedDate(undefined);
+    setTimeValue("");
+    onChange(undefined);
+    setOpen(false);
+  };
+  console.log("selectedDate", selectedDate);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn("w-full justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}
-        >
+        <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}>
           <CalendarIcon className="mr-2 h-4 w-4" />
           {selectedDate ? (
             <span>
@@ -102,5 +124,5 @@ export function DateTimePicker({ value, onChange, placeholder = "Pick a date and
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

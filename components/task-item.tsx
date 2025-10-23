@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from "@/lib/utils";
 import { format, addHours } from "date-fns";
 import { getRecurrenceDescription } from "@/lib/utils/rrule-helpers";
+import { safeFormatDate } from "@/lib/utils/timezone-helpers";
 import { useState } from "react";
 
 interface TaskItemProps {
@@ -27,6 +28,7 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
         status: task.status === "done" ? "todo" : "done",
         completed_at: task.status === "done" ? null : new Date().toISOString(),
       },
+      originalTask: task,
     });
   };
 
@@ -41,6 +43,7 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
       updates: {
         snoozed_until: snoozeUntil.toISOString(),
       },
+      originalTask: task,
     });
   };
 
@@ -50,6 +53,7 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
       updates: {
         snoozed_until: null,
       },
+      originalTask: task,
     });
   };
 
@@ -73,7 +77,13 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
       <div className={cn("group flex items-start gap-3 rounded-lg border bg-card p-4 transition-colors hover:bg-accent", task.status === "done" && "opacity-60", isSnoozed && "opacity-50")}>
         <Checkbox checked={task.status === "done"} onCheckedChange={toggleComplete} className="mt-1" />
 
-        <div className="flex-1 space-y-2" onClick={() => onEdit?.(task)} role="button" tabIndex={0}>
+        <div
+          className="flex-1 space-y-2"
+          onClick={() => {
+            onEdit?.(task);
+          }}
+          role="button"
+          tabIndex={0}>
           <div className="flex items-start justify-between gap-2">
             <h3 className={cn("font-medium leading-tight cursor-pointer hover:text-primary", task.status === "done" && "line-through")}>{task.title}</h3>
 
@@ -84,32 +94,57 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit?.(task)}>
+                <DropdownMenuItem
+                  onClick={e => {
+                    e.stopPropagation();
+                    onEdit?.(task);
+                  }}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </DropdownMenuItem>
                 {isSnoozed ? (
-                  <DropdownMenuItem onClick={handleUnsnooze}>
+                  <DropdownMenuItem
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleUnsnooze();
+                    }}>
                     <BellOff className="mr-2 h-4 w-4" />
                     Unsnooze
                   </DropdownMenuItem>
                 ) : (
                   <>
-                    <DropdownMenuItem onClick={() => handleSnooze(1)}>
+                    <DropdownMenuItem
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleSnooze(1);
+                      }}>
                       <Bell className="mr-2 h-4 w-4" />
                       Snooze 1 hour
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSnooze(3)}>
+                    <DropdownMenuItem
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleSnooze(3);
+                      }}>
                       <Bell className="mr-2 h-4 w-4" />
                       Snooze 3 hours
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSnooze(24)}>
+                    <DropdownMenuItem
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleSnooze(24);
+                      }}>
                       <Bell className="mr-2 h-4 w-4" />
                       Snooze 1 day
                     </DropdownMenuItem>
                   </>
                 )}
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
+                  className="text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -129,7 +164,7 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
             {task.due_date && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                {format(new Date(task.due_date), "MMM d")}
+                {safeFormatDate(task.due_date, "MMM d")}
               </div>
             )}
 
@@ -167,12 +202,6 @@ export function TaskItem({ task, onEdit }: TaskItemProps) {
               </Badge>
             ))}
           </div>
-
-          {task.subtasks && task.subtasks.length > 0 && (
-            <div className="text-xs text-muted-foreground">
-              {task.subtasks.filter(st => st.status === "done").length}/{task.subtasks.length} subtasks completed
-            </div>
-          )}
         </div>
       </div>
     </>
