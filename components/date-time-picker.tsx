@@ -84,7 +84,6 @@ export function DateTimePicker({ value, onChange, placeholder = "Pick a date and
     onChange(undefined);
     setOpen(false);
   };
-  console.log("selectedDate", selectedDate);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

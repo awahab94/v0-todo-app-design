@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useCompletedTasks } from "@/lib/hooks/use-filtered-tasks"
-import { TaskItem } from "@/components/task-item"
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { TaskForm } from "@/components/task-form"
-import type { Task } from "@/lib/types/database"
-import { Skeleton } from "@/components/ui/skeleton"
-import { CheckCircle2 } from "lucide-react"
+import { useCompletedTasks } from "@/lib/hooks/use-filtered-tasks";
+import { TaskItem } from "@/components/task-item";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TaskForm } from "@/components/task-form";
+import type { Task } from "@/lib/types/database";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CheckCircle2 } from "lucide-react";
 
 export default function CompletedPage() {
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const { data: tasks, isLoading } = useCompletedTasks()
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { data: tasks, isLoading } = useCompletedTasks();
 
   if (isLoading) {
     return (
@@ -26,7 +26,7 @@ export default function CompletedPage() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -41,7 +41,7 @@ export default function CompletedPage() {
 
       <div className="space-y-3">
         {tasks && tasks.length > 0 ? (
-          tasks.map((task) => <TaskItem key={task.id} task={task} onEdit={setEditingTask} />)
+          tasks.map(task => <TaskItem key={task.id} task={task} onEdit={setEditingTask} />)
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-lg text-muted-foreground">No completed tasks yet</p>
@@ -50,8 +50,8 @@ export default function CompletedPage() {
         )}
       </div>
 
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent>
+      <Dialog open={!!editingTask} onOpenChange={open => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
           </DialogHeader>
@@ -59,5 +59,5 @@ export default function CompletedPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

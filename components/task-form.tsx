@@ -64,7 +64,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
       const taskData = {
         title: data.title,
         description: data.description,
-        priority: data.priority,
+        priority: data.priority || null,
         due_date: toUTC(dueDateTime),
         due_time: dueDateTime ? dueDateTime.toTimeString().slice(0, 5) : null,
         label_ids: selectedLabels,
@@ -115,10 +115,10 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
         <Textarea id="description" {...register("description")} placeholder="Add details..." rows={3} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="priority">Priority</Label>
-          <Select defaultValue={task?.priority || ""} onValueChange={value => register("priority").onChange({ target: { value } })}>
+          <Select value={watch("priority")} onValueChange={value => setValue("priority", value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select priority" />
             </SelectTrigger>
@@ -130,7 +130,7 @@ export function TaskForm({ task, onSuccess, parentId }: TaskFormProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 col-span-2">
           <Label>Due Date & Time</Label>
           <DateTimePicker value={dueDateTime} onChange={setDueDateTime} placeholder="Pick a date and time" />
         </div>

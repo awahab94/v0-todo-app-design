@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useTodayTasks } from "@/lib/hooks/use-filtered-tasks"
-import { TaskGroup } from "@/components/task-group"
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { TaskForm } from "@/components/task-form"
-import type { Task } from "@/lib/types/database"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Badge } from "@/components/ui/badge"
-import { AlertCircle } from "lucide-react"
+import { useTodayTasks } from "@/lib/hooks/use-filtered-tasks";
+import { TaskGroup } from "@/components/task-group";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TaskForm } from "@/components/task-form";
+import type { Task } from "@/lib/types/database";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { AlertCircle } from "lucide-react";
 
 export default function TodayPage() {
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const { data: tasks, isLoading } = useTodayTasks()
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { data: tasks, isLoading } = useTodayTasks();
 
   if (isLoading) {
     return (
@@ -27,20 +27,20 @@ export default function TodayPage() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
-  const overdueTasks = tasks?.filter((task) => {
-    if (!task.due_date) return false
-    return new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0))
-  })
+  const overdueTasks = tasks?.filter(task => {
+    if (!task.due_date) return false;
+    return new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0));
+  });
 
-  const todayTasks = tasks?.filter((task) => {
-    if (!task.due_date) return false
-    const taskDate = new Date(task.due_date).setHours(0, 0, 0, 0)
-    const today = new Date().setHours(0, 0, 0, 0)
-    return taskDate === today
-  })
+  const todayTasks = tasks?.filter(task => {
+    if (!task.due_date) return false;
+    const taskDate = new Date(task.due_date).setHours(0, 0, 0, 0);
+    const today = new Date().setHours(0, 0, 0, 0);
+    return taskDate === today;
+  });
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -64,9 +64,7 @@ export default function TodayPage() {
           />
         )}
 
-        {todayTasks && todayTasks.length > 0 && (
-          <TaskGroup title="Today" tasks={todayTasks} onEditTask={setEditingTask} />
-        )}
+        {todayTasks && todayTasks.length > 0 && <TaskGroup title="Today" tasks={todayTasks} onEditTask={setEditingTask} />}
 
         {(!tasks || tasks.length === 0) && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -76,8 +74,8 @@ export default function TodayPage() {
         )}
       </div>
 
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent>
+      <Dialog open={!!editingTask} onOpenChange={open => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
           </DialogHeader>
@@ -85,5 +83,5 @@ export default function TodayPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

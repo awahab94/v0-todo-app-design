@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useUpcomingTasks } from "@/lib/hooks/use-filtered-tasks"
-import { TaskGroup } from "@/components/task-group"
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { TaskForm } from "@/components/task-form"
-import type { Task } from "@/lib/types/database"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useUpcomingTasks } from "@/lib/hooks/use-filtered-tasks";
+import { TaskGroup } from "@/components/task-group";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TaskForm } from "@/components/task-form";
+import type { Task } from "@/lib/types/database";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UpcomingPage() {
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const { data: groupedTasks, isLoading } = useUpcomingTasks()
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { data: groupedTasks, isLoading } = useUpcomingTasks();
 
   if (isLoading) {
     return (
@@ -28,7 +28,7 @@ export default function UpcomingPage() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -40,9 +40,7 @@ export default function UpcomingPage() {
 
       <div className="space-y-8">
         {groupedTasks && groupedTasks.length > 0 ? (
-          groupedTasks.map((group) => (
-            <TaskGroup key={group.label} title={group.label} tasks={group.tasks} onEditTask={setEditingTask} />
-          ))
+          groupedTasks.map(group => <TaskGroup key={group.label} title={group.label} tasks={group.tasks} onEditTask={setEditingTask} />)
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-lg text-muted-foreground">No upcoming tasks</p>
@@ -51,8 +49,8 @@ export default function UpcomingPage() {
         )}
       </div>
 
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent>
+      <Dialog open={!!editingTask} onOpenChange={open => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
           </DialogHeader>
@@ -60,5 +58,5 @@ export default function UpcomingPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

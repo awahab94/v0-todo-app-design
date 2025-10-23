@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useInboxTasks } from "@/lib/hooks/use-filtered-tasks"
-import { TaskItem } from "@/components/task-item"
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { TaskForm } from "@/components/task-form"
-import type { Task } from "@/lib/types/database"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useInboxTasks } from "@/lib/hooks/use-filtered-tasks";
+import { TaskItem } from "@/components/task-item";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TaskForm } from "@/components/task-form";
+import type { Task } from "@/lib/types/database";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function InboxPage() {
-  const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const { data: tasks, isLoading } = useInboxTasks()
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { data: tasks, isLoading } = useInboxTasks();
 
   if (isLoading) {
     return (
@@ -25,7 +25,7 @@ export default function InboxPage() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -37,7 +37,7 @@ export default function InboxPage() {
 
       <div className="space-y-3">
         {tasks && tasks.length > 0 ? (
-          tasks.map((task) => <TaskItem key={task.id} task={task} onEdit={setEditingTask} />)
+          tasks.map(task => <TaskItem key={task.id} task={task} onEdit={setEditingTask} />)
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-lg text-muted-foreground">Your inbox is empty</p>
@@ -46,8 +46,8 @@ export default function InboxPage() {
         )}
       </div>
 
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent>
+      <Dialog open={!!editingTask} onOpenChange={open => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
           </DialogHeader>
@@ -55,5 +55,5 @@ export default function InboxPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
