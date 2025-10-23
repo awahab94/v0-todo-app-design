@@ -1,33 +1,33 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Plus, Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-import { useAuth } from "@/lib/hooks/use-auth"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { TaskForm } from "./task-form"
-import { NaturalLanguageInput } from "./natural-language-input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Plus, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { TaskForm } from "./task-form";
+import { NaturalLanguageInput } from "./natural-language-input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 interface AppHeaderProps {
-  user: { email?: string; user_metadata?: { display_name?: string } }
+  user: { email?: string; user_metadata?: { display_name?: string } };
 }
 
 export function AppHeader({ user }: AppHeaderProps) {
-  const { theme, setTheme } = useTheme()
-  const { signOut } = useAuth()
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { theme, setTheme } = useTheme();
+  const { signOut } = useAuth();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "User"
+  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "User";
   const initials = displayName
     .split(" ")
-    .map((n) => n[0])
+    .map(n => n[0])
     .join("")
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2);
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
@@ -78,5 +78,5 @@ export function AppHeader({ user }: AppHeaderProps) {
         </DropdownMenu>
       </div>
     </header>
-  )
+  );
 }
