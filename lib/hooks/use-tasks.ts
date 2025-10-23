@@ -131,11 +131,11 @@ export function useCreateTask() {
 
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       showTaskCreatedAlert(data.title);
     },
-    onError: (error) => {
+    onError: error => {
       showTaskErrorAlert("create task", error.message);
     },
   });
@@ -144,20 +144,10 @@ export function useCreateTask() {
 export function useUpdateTask() {
   const supabase = createClient();
   const queryClient = useQueryClient();
-  const { 
-    showTaskUpdatedAlert, 
-    showTaskStatusChangeAlert, 
-    showTaskPriorityChangeAlert,
-    showTaskDueDateChangeAlert,
-    showTaskErrorAlert 
-  } = useTaskAlerts();
+  const { showTaskUpdatedAlert, showTaskStatusChangeAlert, showTaskPriorityChangeAlert, showTaskDueDateChangeAlert, showTaskErrorAlert } = useTaskAlerts();
 
   return useMutation({
-    mutationFn: async ({ id, updates, originalTask }: { 
-      id: string; 
-      updates: Partial<Task> & { label_ids?: string[] };
-      originalTask?: Task;
-    }) => {
+    mutationFn: async ({ id, updates, originalTask }: { id: string; updates: Partial<Task> & { label_ids?: string[] }; originalTask?: Task }) => {
       const { label_ids, ...taskUpdates } = updates;
 
       // Handle empty priority values
@@ -201,21 +191,19 @@ export function useUpdateTask() {
         if (data.status !== originalTask.status) {
           showTaskStatusChangeAlert(data.title, originalTask.status, data.status);
         }
-        
+
         // Check for priority change
         if (data.priority !== originalTask.priority) {
           showTaskPriorityChangeAlert(data.title, originalTask.priority, data.priority);
         }
-        
+
         // Check for due date change
         if (data.due_date !== originalTask.due_date) {
           showTaskDueDateChangeAlert(data.title, originalTask.due_date, data.due_date);
         }
-        
+
         // Show general update alert if no specific changes detected
-        if (data.status === originalTask.status && 
-            data.priority === originalTask.priority && 
-            data.due_date === originalTask.due_date) {
+        if (data.status === originalTask.status && data.priority === originalTask.priority && data.due_date === originalTask.due_date) {
           showTaskUpdatedAlert(data.title);
         }
       } else {
@@ -223,7 +211,7 @@ export function useUpdateTask() {
         showTaskUpdatedAlert(data.title);
       }
     },
-    onError: (error) => {
+    onError: error => {
       showTaskErrorAlert("update task", error.message);
     },
   });
@@ -247,7 +235,7 @@ export function useDeleteTask() {
       if (error) throw error;
       return id;
     },
-    onSuccess: (id) => {
+    onSuccess: id => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       // We'll show the alert with the task title if we can get it from cache
       const tasks = queryClient.getQueryData(["tasks"]) as Task[] | undefined;
@@ -256,7 +244,7 @@ export function useDeleteTask() {
         showTaskDeletedAlert(task.title);
       }
     },
-    onError: (error) => {
+    onError: error => {
       showTaskErrorAlert("delete task", error.message);
     },
   });
@@ -280,7 +268,7 @@ export function useRestoreTask() {
       if (error) throw error;
       return id;
     },
-    onSuccess: (id) => {
+    onSuccess: id => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       // We'll show the alert with the task title if we can get it from cache
       const tasks = queryClient.getQueryData(["tasks"]) as Task[] | undefined;
@@ -289,7 +277,7 @@ export function useRestoreTask() {
         showTaskRestoredAlert(task.title);
       }
     },
-    onError: (error) => {
+    onError: error => {
       showTaskErrorAlert("restore task", error.message);
     },
   });
